@@ -11,6 +11,7 @@ The script will automatically download the required `bundle.js` file if it is no
 * Search machines by name
 * Search by operating system
 * Search by difficulty
+* Combine operating system and difficulty filters.
 * Fast local searches
 * Lightweight and easy to customize
 * Display the YouTube walkthrough for a machine (when available).
