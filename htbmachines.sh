@@ -27,6 +27,7 @@ function helpPanel(){
   echo -e "\t${yellowColour}m)${endColour}${grayColour} Buscar por un nombre de maquina${endColour}"
   echo -e "\t${yellowColour}i)${endColour}${grayColour} Buscar por direccion IP${endColour}"
   echo -e "\t${yellowColour}d)${endColour}${grayColour} Buscar por la dificultad de la maquina${endColour}"
+  echo -e "\t${yellowColour}o)${endColour}${grayColour} Buscar por el sistema operativo${endColour}"
   echo -e "\t${yellowColour}y)${endColour}${grayColour} Obtener el link de la resolucion de la maquina en Youtube${endColour}"
   echo -e "\t${yellowColour}h)${endColour}${grayColour} Mostrar este panel de ayuda${endColour}\n"
 }
@@ -107,7 +108,7 @@ function getYoutubeLink(){
 function getMachinesDifficulty(){
   difficulty="$1"
 
-  results_checker=$(cat bundle.js | grep "dificultad: \"$difficulty\"" -B 5 | grep name | awk 'NF{print $NF}' | tr -d '"' | tr -d ',')
+  results_checker=$(cat bundle.js | grep "dificultad: \"$difficulty\"" -B 5 | grep "name:" | awk 'NF{print $NF}' | tr -d '"' | tr -d ',')
 
   if [ "$results_checker" ]; then
     echo -e "\n${yellowColour}[+]${endColour}${grayColour} Representando las maquinas que poseen un nivel de dificultad:${endColour}${blueColour} $difficulty${endColour}"
@@ -117,17 +118,30 @@ function getMachinesDifficulty(){
   fi
 }
 
+function getOSMachines(){
+  os="$1"
+
+  os_results=$(cat bundle.js | grep "so: \"$os\"" -B 5 | grep "name: " | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column)
+  if [ "$os_results" ]; then
+    echo -e "\n${yellowColour}[+]${endColour}${grayColour} Mostrando las maquinas cuyo sistema operativo es:${endColour}${blueColour}$os${endColour}\n"
+    cat bundle.js | grep "so: \"Linux\"" -B 5 | grep "name: " | awk 'NF{print $NF}' | tr -d '"' | tr -d ',' | column
+  else
+    echo -e "\n${redColour}[!] El sistema operativo indicado no existe${endColour}\n" 
+  fi	  
+}
+
 # Indicadores
 
 declare -i parameter_counter=0
 
-while getopts "m:ui:d:y:h" arg; do
+while getopts "m:ui:d:y:o:h" arg; do
   case $arg in
     m) machineName=$OPTARG; let parameter_counter+=1;;
     u) let parameter_counter+=2;;
     i) ipAddress=$OPTARG; let parameter_counter+=3;;
     y) machineName=$OPTARG; let parameter_counter+=4;;
     d) difficulty=$OPTARG; let parameter_counter+=5;;
+    o) os=$OPTARG; let parameter_counter+=6;;
     h) ;;
   esac
 done
@@ -140,8 +154,10 @@ elif [ "$parameter_counter" -eq 3 ]; then
   searchIP "$ipAddress"
 elif [ "$parameter_counter" -eq 4 ]; then
   getYoutubeLink "$machineName"
-elif  [ "$parameter_counter" -eq 5 ]; then
+elif [ "$parameter_counter" -eq 5 ]; then
   getMachinesDifficulty "$difficulty"
+elif [ "$parameter_counter" -eq 6 ]; then
+  getOSMachines $os
 else
   helpPanel
 fi
