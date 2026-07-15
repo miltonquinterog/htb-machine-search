@@ -12,10 +12,21 @@ The script will automatically download the required `bundle.js` file if it is no
 * Search by operating system
 * Search by difficulty
 * Combine operating system and difficulty filters.
+* Search Machines by skills.
 * Fast local searches
 * Lightweight and easy to customize
 * Display the YouTube walkthrough for a machine (when available).
 * Automatically download and update `bundle.js`.
+
+## Examples
+
+* Search machines by skill:
+
+./htbmachines.sh -s "Active directory"
+
+* Search machines requiring SQL Injection:
+
+./htbmachines.sh -s "sqli"
 
 ## Requirements
 
